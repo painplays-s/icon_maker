@@ -38,13 +38,24 @@ class IconMaker(QMainWindow):
             img = Image.open(file_path)
             if img.size[0] != img.size[1]:
                 raise ValueError("Image must be square (e.g. 512x512)")
-
-            icon_path = os.path.join(os.path.dirname(file_path), "icon.ico")
-            img.save(icon_path, format='ICO', sizes=[
+            
+            # Ask user where to save the ICO file
+            default_name = "icon.ico"
+            default_dir = os.path.dirname(file_path)
+            save_path, _ = QFileDialog.getSaveFileName(
+                self, "Save ICO File", 
+                os.path.join(default_dir, default_name),
+                "ICO Files (*.ico)"
+            )
+            
+            if not save_path:
+                return  # User canceled the save dialog
+                
+            img.save(save_path, format='ICO', sizes=[
                 (16, 16), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)
             ])
 
-            QMessageBox.information(self, "Success", f"icon.ico saved at:\n{icon_path}")
+            QMessageBox.information(self, "Success", f"ICO file saved at:\n{save_path}")
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Failed to convert icon:\n{str(e)}")
 
